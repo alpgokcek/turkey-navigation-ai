@@ -1,0 +1,16 @@
+\BOOKMARK [1][-]{section.1}{Introduction \046 Problem Statement}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Terminology}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Problem}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{A* \(A-star\) Search Algorithm}{section.1}% 4
+\BOOKMARK [3][-]{subsubsection.1.3.1}{Advantages}{subsection.1.3}% 5
+\BOOKMARK [3][-]{subsubsection.1.3.2}{Disadvantages}{subsection.1.3}% 6
+\BOOKMARK [2][-]{subsection.1.4}{Breadth-First Search Algorithm}{section.1}% 7
+\BOOKMARK [2][-]{subsection.1.5}{Dijkstra Algorithm}{section.1}% 8
+\BOOKMARK [1][-]{section.2}{Solution Design Process}{}% 9
+\BOOKMARK [2][-]{subsection.2.1}{Manhattan Distance}{section.2}% 10
+\BOOKMARK [1][-]{section.3}{Implementation}{}% 11
+\BOOKMARK [2][-]{subsection.3.1}{Creating and collecting data}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.2}{Deciding and implementing algorithm}{section.3}% 13
+\BOOKMARK [2][-]{subsection.3.3}{Creating the GUI}{section.3}% 14
+\BOOKMARK [1][-]{section.4}{Testing and Bug-fixing}{}% 15
+\BOOKMARK [1][-]{section*.1}{References}{}% 16

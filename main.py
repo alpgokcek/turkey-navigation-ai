@@ -1,68 +1,50 @@
 from tkinter import *
 from tkinter import font  as tkfont
-
+import math
 import csv
+from queue import PriorityQueue
+from City import City
+from Road import Road
+from MapGraph import MapGraph
 
-class City:
-    def __init__(self, name, x_pos, y_pos):
-        self.name = name
-        self.x_pos = x_pos
-        self.y_pos = y_pos
-        self.roads = []
+graph = MapGraph()
 
-    def add_road(self, road):
-        self.roads.append(road)
+def draw_path():
+    path, cost_so_far, is_path_found = graph.a_star_search(graph.cities[city_var1.get()], graph.cities[city_var2.get()])
+    print("\n--------------------------------------------------------------------------------\npath:",path)
+    print("cost_so_far{}\n--------------------------------------------------------------------------------\n".format(cost_so_far))
+    canvas = Canvas(width=1492, height=771)
+    canvas.create_image(0, 0, image=map_img, anchor=NW)
 
-    def __repr__(self):
-        return "{}, x: {}, y: {}, roads:{}".format(self.name, self.x_pos, self.y_pos, self.roads)
-    def __str__(self):
-        return "{}, x: {}, y: {}, roads:{}".format(self.name, self.x_pos, self.y_pos, self.roads)
+    for road in graph.roads:
+        canvas.create_line(road.city1.x_pos+5, road.city1.y_pos+5, road.city2.x_pos+5, road.city2.y_pos+5)
 
-class Road:
-    def __init__(self, city1, city2, cost):
-        self.city1 = city1
-        self.city2 = city2
-        self.cost = cost
+    for city1,city2 in zip(path, path[1:]):
+        canvas.create_line(graph.cities[city1].x_pos+5, graph.cities[city1].y_pos+5, graph.cities[city2].x_pos+5, graph.cities[city2].y_pos+5, width=6, fill='blue')
 
-    def __repr__(self):
-        return "{}, x: {}, y: {}".format(self.city1, self.city2, self.cost)
-    def __str__(self):
-        return "{}, x: {}, y: {}".format(self.city1, self.city2, self.cost)
+    for city in graph.cities.values():
+        canvas.create_oval(city.x_pos, city.y_pos, city.x_pos + 10, city.y_pos + 10, fill="red")
 
-cities = dict()
+    canvas.grid(row=1, column=0)
 
-with open('cities.csv') as csv_file:
+def calculate_distance(city1, city2):
+    c1_x, c1_y, c2_x, c2_y = city1.x_pos, city1.y_pos, city2.x_pos, city2.y_pos
+    return int(math.sqrt( math.pow(c2_x-c1_x, 2) + math.pow(c2_y-c1_y, 2) ) * 1.4)
+
+with open('data/cities.csv') as csv_file:
     buffer = csv.reader(csv_file, delimiter=',')
     for line in buffer:
-        cities[line[0]] = City(line[0], int(line[1]), int(line[2]))
-roads = []
+        graph.cities[line[0]] = City(line[0], int(line[1]), int(line[2]))
 
-with open('roads.csv') as csv_file:
+with open('data/roads.csv') as csv_file:
     buffer = csv.reader(csv_file, delimiter=',')
     for line in buffer:
-        city1, city2, cost = line[0], line[1], 0
-        road = Road(city1,city2,cost)
-        roads.append(road)
-        cities[city1].add_road(road)
-        cities[city2].add_road(road)
-
-print(cities['Istanbul'])
-'''
-
-temp_str = ""
-with open('neighbors.csv') as csv_file:
-    buffer = csv.reader(csv_file, delimiter=',')
-    for line in buffer:
-        temp_arr = line[1:]
-        temp_arr.sort()
-        for i in temp_arr:
-            temp_arr1 = [line[0], i]
-            temp_arr1.sort()
-            temp_str += "{},{}\n".format(temp_arr1[0], temp_arr1[1])
-
-
-print(temp_str)
-'''
+        city1, city2 = line[0], line[1]
+        cost = calculate_distance(graph.cities[city1], graph.cities[city2])
+        road = Road(graph.cities[city1],graph.cities[city2],cost)
+        graph.roads.append(road)
+        graph.cities[city1].add_road(road)
+        graph.cities[city2].add_road(road)
 
 root = Tk()
 frame = Frame(root, width="1492", height="900")
@@ -71,21 +53,42 @@ root.title("Navigation on Turkey Map")
 
 algorithm_font = tkfont.Font(family='Helvetica', size=30, weight="bold")
 Label(frame, text="Navigation on Turkey Map", font=algorithm_font).grid(row=0, column=0)
-# create the canvas, size in pixels
+
+map_img = PhotoImage(file='data/turkey-map.png')
+
 canvas = Canvas(width=1492, height=771)
-
-# load the .gif image file
-map_img = PhotoImage(file='turkey-map.png')
-
-# put gif image on canvas
-# pic's upper left corner (NW) on the canvas is at x=50 y=10
 canvas.create_image(0, 0, image=map_img, anchor=NW)
-for city in cities.values():
+
+for road in graph.roads:
+    canvas.create_line(road.city1.x_pos+5, road.city1.y_pos+5, road.city2.x_pos+5, road.city2.y_pos+5)
+
+for city in graph.cities.values():
     canvas.create_oval(city.x_pos, city.y_pos, city.x_pos + 10, city.y_pos + 10, fill="red")
-# pack the canvas into a frame/form
 
 canvas.grid(row=1, column=0)
 
+nav_frame = Frame(root, width="1492", height="300")
+nav_frame.grid(row=2, column=0)
 
+'''
+################
+## Navigation ##
+################
+'''
+OPTIONS = list(graph.cities.keys())
+
+city_var1 = StringVar(nav_frame)
+city_var1.set(OPTIONS[0])
+city_var2 = StringVar(nav_frame)
+city_var2.set(OPTIONS[0])
+
+city_picker1 = OptionMenu(nav_frame, city_var1, *OPTIONS)
+city_picker1.grid(row=0, column=0)
+
+city_picker2 = OptionMenu(nav_frame, city_var2, *OPTIONS)
+city_picker2.grid(row=0, column=1)
+
+button = Button(nav_frame, text="OK", command=draw_path)
+button.grid(row=0, column=2)
 
 root.mainloop()

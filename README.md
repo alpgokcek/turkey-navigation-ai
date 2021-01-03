@@ -4,17 +4,17 @@ Turkey map navigation AI
 #### Author:     Alp Gökçek
 #### Github:     alpgokcek
 #### Email:      alp.gokcek1@gmail.com
-#### Date:       November, 2020
+#### Date:       December, 2020
 
 Description:
     Turkey map navigation AI with Python
 
 ## Commands
 
-#### Building requirements
+#### Building the requirements
 `pip install -r requirements.txt`
 
-#### Running app
+#### Running the app
 `python3 main.py`
 
 <br/>
